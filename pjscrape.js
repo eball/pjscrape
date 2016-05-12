@@ -14,6 +14,7 @@
  */
 
 var fs = require('fs');
+var system = require('system');
 
 phantom.injectJs('lib/md5.js');
 
@@ -37,7 +38,7 @@ var pjs = (function(){
             format: 'json',
             logFile: 'pjscrape_log.txt',
             outFile: 'pjscrape_out.txt',
-            pageSettings: { }
+            pageSettings: { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36' }
         };
 
     var suites = [];
@@ -874,13 +875,14 @@ var pjs = (function(){
 
 
 // make sure we have a config file
-if (!phantom.args.length) {
+if (system.args.length <= 1) {
     // die
     console.log('Usage: pjscrape.js <configfile.js> ...');
     phantom.exit();
 } else {
     // load the config file(s)
-    phantom.args.forEach(function(configFile) {
+    system.args.forEach(function(configFile) {
+        if (configFile.indexOf("pjscrape.js") != -1) return;
         if (configFile.indexOf(".js") !== -1) {
             if (!phantom.injectJs(configFile)) {
                 fail('Config file not found: ' + configFile);
